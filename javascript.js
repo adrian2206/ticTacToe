@@ -18,7 +18,7 @@ const Gameboard = (function() {
 
 const Players = (function() {
     const createPlayer = function(name, marker) {
-        return {name, marker};
+        return {name, marker, score: 0};
     }
 
     const player1 = createPlayer('name1', 'X');
@@ -29,11 +29,16 @@ const Players = (function() {
         activePlayer = activePlayer === player1 ? player2 : player1;
     }
 
+    const resetPlayer = () => {
+        activePlayer = player1;
+    };
+
     return {
         player1,
         player2,
         get activePlayer() {return activePlayer;},
         switchPlayer,
+        resetPlayer,
     }
 })();
 
@@ -65,13 +70,12 @@ const Game = (function() {
             board[i][j] = Players.activePlayer.marker;
 
             if(checkWinner(board)) {
-                console.log(`Winner is ${Players.activePlayer.name}`);
+                Players.activePlayer.score++;
                 gameOver = true;
                 return;
             }
 
             if(board.flat().every(cell => cell != '')){
-                console.log(`Tie`);
                 gameOver = true;
                 return;
             }
@@ -88,25 +92,50 @@ const Game = (function() {
         gameOver = false;
         board.forEach(row => row.fill(''));
         Gameboard.getBoard();
+        Players.resetPlayer();
         GameDisplay.displayBoard();
     };
 
     return {
         makeMove,
         restart,
+        get gameOver() { return gameOver; },
+        checkWinner
     };
 })();
 
 const GameDisplay = (function() {
     const board = Gameboard.getBoard();
     const boardElement = document.getElementById('game-board');
+    const playersInfo = document.getElementById('player-info');
+    const player1Info = document.createElement('p');
+    const player2Info = document.createElement('p');
+    const turnInfo = document.createElement('p');
+
+    playersInfo.append(player1Info, player2Info, turnInfo);
+
     const displayBoard = () => {
         boardElement.innerHTML = '';
+        const isWinner = Game.checkWinner(board);
+        const isTie = !isWinner && board.flat().every(cell => cell !== '');
+
+        if(isWinner) {
+            turnInfo.textContent = `Winner is ${Players.activePlayer.name}!`;
+        } else if(isTie) {
+            turnInfo.textContent = `It's a Tie!`;
+        } else {
+            turnInfo.textContent = `${Players.activePlayer.name}'s turn (${Players.activePlayer.marker})`;
+        }
+        player1Info.textContent = `${Players.player1.name}: ${Players.player1.score}`;
+        player2Info.textContent = `${Players.player2.name}: ${Players.player2.score}`;
 
         board.forEach((row, i) => {
             row.forEach((cell, j) => {
                 const cellButton = document.createElement('button');
                 cellButton.classList.add('cell-button');
+                cellButton.style.height = '100px';
+                cellButton.style.width = '100px';
+                cellButton.style.fontSize = '2rem';
 
                 cellButton.textContent = cell;
 
@@ -124,3 +153,5 @@ const GameDisplay = (function() {
         displayBoard,
     };
 })();
+
+GameDisplay.displayBoard();
