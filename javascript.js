@@ -39,6 +39,7 @@ const Players = (function() {
 
 const Game = (function() {
         const board = Gameboard.getBoard();
+        let gameOver = false;
 
         const checkWinner = (board) => {
             const winningCondition = [
@@ -60,15 +61,18 @@ const Game = (function() {
         }
 
         const makeMove = (i, j) => {
-        if(board[i][j] === '') {
+        if(!gameOver && board[i][j] === '') {
             board[i][j] = Players.activePlayer.marker;
+
             if(checkWinner(board)) {
                 console.log(`Winner is ${Players.activePlayer.name}`);
+                gameOver = true;
                 return;
             }
 
             if(board.flat().every(cell => cell != '')){
                 console.log(`Tie`);
+                gameOver = true;
                 return;
             }
 
@@ -80,7 +84,43 @@ const Game = (function() {
         }
     }
 
+    const restart = () => {
+        gameOver = false;
+        board.forEach(row => row.fill(''));
+        Gameboard.getBoard();
+        GameDisplay.displayBoard();
+    };
+
     return {
         makeMove,
+        restart,
+    };
+})();
+
+const GameDisplay = (function() {
+    const board = Gameboard.getBoard();
+    const boardElement = document.getElementById('game-board');
+    const displayBoard = () => {
+        boardElement.innerHTML = '';
+
+        board.forEach((row, i) => {
+            row.forEach((cell, j) => {
+                const cellButton = document.createElement('button');
+                cellButton.classList.add('cell-button');
+
+                cellButton.textContent = cell;
+
+                cellButton.addEventListener('click', () => {
+                    Game.makeMove(i, j);
+                    displayBoard();
+                });
+
+                boardElement.appendChild(cellButton);
+            });
+        });
+    };
+
+    return {
+        displayBoard,
     };
 })();
