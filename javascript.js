@@ -11,8 +11,13 @@ const Gameboard = (function() {
 
     const getBoard = () => board;
 
+    const resetBoard = () => {
+        board = [];
+    }
+
     return {
         getBoard,
+        resetBoard,
     }
     })();
 
@@ -33,12 +38,18 @@ const Players = (function() {
         activePlayer = player1;
     };
 
+    const resetScore = () => {
+        player1.score = 0;
+        player2.score = 0;
+    };
+
     return {
         player1,
         player2,
         get activePlayer() {return activePlayer;},
         switchPlayer,
         resetPlayer,
+        resetScore
     }
 })();
 
@@ -82,13 +93,10 @@ const Game = (function() {
 
             Players.switchPlayer();
 
-            console.log('Successful move!');
-        } else {
-            console.log('Cell is already filled!')
         }
     }
 
-    const restart = () => {
+    const newGame = () => {
         gameOver = false;
         board.forEach(row => row.fill(''));
         Gameboard.getBoard();
@@ -96,11 +104,22 @@ const Game = (function() {
         GameDisplay.displayBoard();
     };
 
+    const newMatch = () => {
+        gameOver = false;
+        board.forEach(row => row.fill(''));
+        Gameboard.getBoard();
+        Players.resetPlayer();
+        Players.resetScore();
+        GameDisplay.displayBoard();
+    };
+
+
     return {
         makeMove,
-        restart,
+        newGame,
         get gameOver() { return gameOver; },
-        checkWinner
+        checkWinner,
+        newMatch
     };
 })();
 
@@ -108,11 +127,13 @@ const GameDisplay = (function() {
     const board = Gameboard.getBoard();
     const boardElement = document.getElementById('game-board');
     const playersInfo = document.getElementById('player-info');
+    const scoreInfo = document.getElementById('score');
     const player1Info = document.createElement('p');
     const player2Info = document.createElement('p');
     const turnInfo = document.createElement('p');
 
-    playersInfo.append(player1Info, player2Info, turnInfo);
+    scoreInfo.append(player1Info, player2Info);
+    playersInfo.append(turnInfo);
 
     const displayBoard = () => {
         boardElement.innerHTML = '';
@@ -148,6 +169,12 @@ const GameDisplay = (function() {
             });
         });
     };
+
+    const startNewGame = document.getElementById('new-game');
+    startNewGame.addEventListener('click', Game.newGame);
+
+    const startNewMatch = document.getElementById('new-match');
+    startNewMatch.addEventListener('click', Game.newMatch);
 
     return {
         displayBoard,
