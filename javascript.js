@@ -26,8 +26,8 @@ const Players = (function() {
         return {name, marker, score: 0};
     }
 
-    const player1 = createPlayer('name1', 'X');
-    const player2 = createPlayer('name2', '0');
+    const player1 = createPlayer('First Player', 'X');
+    const player2 = createPlayer('Second Player', '0');
 
     let activePlayer = player1;
     const switchPlayer = () => {
@@ -126,19 +126,30 @@ const Game = (function() {
 const GameDisplay = (function() {
     const board = Gameboard.getBoard();
     const boardElement = document.getElementById('game-board');
-    const playersInfo = document.getElementById('player-info');
-    const scoreInfo = document.getElementById('score');
+    const playersTurn = document.getElementById('player-turn');
+    const player1Display = document.getElementById('player1-display');
+    const player2Display = document.getElementById('player2-display');
     const player1Info = document.createElement('p');
+    player1Info.style.fontSize = "14px";
+    const player1Score = document.createElement('p');
+    player1Score.style.color = '#185FA5'
+    player1Score.style.fontSize = '2rem';
     const player2Info = document.createElement('p');
+    player2Info.style.fontSize = "14px";
+    const player2Score = document.createElement('p');
+    player2Score.style.color = '#993C1D'
+    player2Score.style.fontSize = '2rem';
     const turnInfo = document.createElement('p');
+    turnInfo.style.fontSize = "14px";
     const modal = document.getElementById('name-input');
     const closeModal = document.getElementById('close-modal');
 
     modal.showModal();
     closeModal.disabled = true;
 
-    scoreInfo.append(player1Info, player2Info);
-    playersInfo.append(turnInfo);
+    player1Display.append(player1Info,player1Score);
+    player2Display.append(player2Info, player2Score);
+    playersTurn.append(turnInfo);
 
     const displayBoard = () => {
         boardElement.innerHTML = '';
@@ -150,10 +161,12 @@ const GameDisplay = (function() {
         } else if(isTie) {
             turnInfo.textContent = `It's a Tie!`;
         } else {
-            turnInfo.textContent = `${Players.activePlayer.name}'s turn (${Players.activePlayer.marker})`;
+            turnInfo.textContent = `Turn: ${Players.activePlayer.name} (${Players.activePlayer.marker})`;
         }
-        player1Info.textContent = `${Players.player1.name}: ${Players.player1.score}`;
-        player2Info.textContent = `${Players.player2.name}: ${Players.player2.score}`;
+        player1Info.textContent = `${Players.player1.name}(X)`;
+        player1Score.textContent = `${Players.player1.score}`;
+        player2Info.textContent = `${Players.player2.name}(0)`;
+        player2Score.textContent = `${Players.player2.score}`;
 
         board.forEach((row, i) => {
             row.forEach((cell, j) => {
@@ -161,9 +174,18 @@ const GameDisplay = (function() {
                 cellButton.classList.add('cell-button');
                 cellButton.style.height = '100px';
                 cellButton.style.width = '100px';
+                cellButton.style.backgroundColor = '#F2F1EB';
+                cellButton.style.border = '1px solid rgba(0,0,0,0.15)';
+                cellButton.style.borderRadius = '10px';
                 cellButton.style.fontSize = '2rem';
 
                 cellButton.textContent = cell;
+
+                if (cell === 'X') {
+                    cellButton.style.color = '#185FA5'; // Albastru (Player 1)
+                } else if (cell === '0') {
+                    cellButton.style.color = '#993C1D'; // Roșu (Player 2)
+                }
 
                 cellButton.addEventListener('click', () => {
                     Game.makeMove(i, j);
@@ -228,4 +250,3 @@ const GameDisplay = (function() {
 })();
 
 GameDisplay.displayBoard();
-modal.showModal();

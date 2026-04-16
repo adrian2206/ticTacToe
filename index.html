@@ -9,9 +9,11 @@
 </head>
 <body>
     <div class="container" id="container">
-        <div class="player-info" id="player-info">
-            <div class="score" id="score"></div>
+        <div class="score" id="score">
+            <div class="player1-display" id="player1-display"></div>
+            <div class="player2-display" id="player2-display"></div>
         </div>
+        <div class="player-turn" id="player-turn"></div>
         <div class="game-board" id="game-board"></div>
         <div class="button-container">
             <button id="new-match" type="submit">New Match</button>
@@ -19,17 +21,19 @@
         </div>
         <dialog class="name-input" id="name-input">
             <div class="modal-container">
-                <p>Choose players:</p>
+                <h2 tabindex="-1">Choose players:</h2>
                 <form>
-                    <div>
-                        <label for="player1">First Player</label>
-                        <input id="player1" type="text" name="name1" required>
-                    </div>
-                    <div>
-                        <label for="player2">Second Player</label>
-                        <input type="text" id="player2" name="name2" required>
-                    </div>
-                    <div>
+                    <fieldset>
+                        <div class="player1-input">
+                            <label for="player1">First Player</label>
+                            <input id="player1" type="text" name="name1" placeholder="Enter name..." required>
+                        </div>
+                        <div class="player2-input">
+                            <label for="player2">Second Player</label>
+                            <input type="text" id="player2" name="name2" placeholder="Enter name..." required>
+                        </div>
+                    </fieldset>
+                    <div class="modal-button-container">
                         <button type="reset" id="close-modal" disabled>Cancel</button>
                         <button type="submit" id="submit" value="default" disabled>Submit</button>
                     </div>
