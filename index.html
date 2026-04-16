@@ -17,6 +17,25 @@
             <button id="new-match" type="submit">New Match</button>
             <button id="new-game" type="submit">New Game</button>
         </div>
+        <dialog class="name-input" id="name-input">
+            <div class="modal-container">
+                <p>Choose players:</p>
+                <form>
+                    <div>
+                        <label for="player1">First Player</label>
+                        <input id="player1" type="text" name="name1" required>
+                    </div>
+                    <div>
+                        <label for="player2">Second Player</label>
+                        <input type="text" id="player2" name="name2" required>
+                    </div>
+                    <div>
+                        <button type="reset" id="close-modal" disabled>Cancel</button>
+                        <button type="submit" id="submit" value="default" disabled>Submit</button>
+                    </div>
+                </form>
+            </div>
+        </dialog>
     </div>
 </body>
 </html>

@@ -131,6 +131,11 @@ const GameDisplay = (function() {
     const player1Info = document.createElement('p');
     const player2Info = document.createElement('p');
     const turnInfo = document.createElement('p');
+    const modal = document.getElementById('name-input');
+    const closeModal = document.getElementById('close-modal');
+
+    modal.showModal();
+    closeModal.disabled = true;
 
     scoreInfo.append(player1Info, player2Info);
     playersInfo.append(turnInfo);
@@ -173,8 +178,49 @@ const GameDisplay = (function() {
     const startNewGame = document.getElementById('new-game');
     startNewGame.addEventListener('click', Game.newGame);
 
-    const startNewMatch = document.getElementById('new-match');
-    startNewMatch.addEventListener('click', Game.newMatch);
+    const showModal = document.getElementById('new-match');
+    const submitModal = document.getElementById('submit');
+
+    showModal.addEventListener('click', () => {
+        modal.showModal();
+    });
+
+    modal.addEventListener('close', () => {
+        modalForm.reset();
+        modal.close();
+        submitModal.disabled = true;
+    });
+
+    closeModal.addEventListener('click', () => {
+        modalForm.reset();
+        modal.close();
+        submitModal.disabled = true;
+    });
+
+    const modalForm = modal.querySelector(`form`);
+    modalForm.addEventListener(`input`, () => {
+        if(modalForm.checkValidity()) {
+            submitModal.disabled = false;
+        } else {
+            submitModal.disabled = true;
+        }
+    });
+
+    modalForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+
+        const name1 = modalForm.querySelector('#player1').value;
+        const name2 = modalForm.querySelector('#player2').value;
+
+        Players.player1.name = name1;
+        Players.player2.name = name2;
+
+        closeModal.disabled = false;
+        modalForm.reset();
+        modal.close();
+        Game.newMatch();
+    });
+
 
     return {
         displayBoard,
@@ -182,3 +228,4 @@ const GameDisplay = (function() {
 })();
 
 GameDisplay.displayBoard();
+modal.showModal();
